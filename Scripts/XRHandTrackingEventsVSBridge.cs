@@ -12,32 +12,12 @@ namespace com.prossel.XR.Hands
     // TODO: Eventually replace by a Custom Scripting Event node which would merge this component and the subgraph.
     public class XRHandTrackingEventsVSBridge : MonoBehaviour
     {
+        public Handedness handedness = Handedness.Invalid;
+
         public XRHand hand;
         public bool handIsTracked => handTrackingEvents ? handTrackingEvents.handIsTracked : false;
 
         XRHandTrackingEvents handTrackingEvents;
-
-
-        private void OnEnable()
-        {
-            //Debug.Log("OnEnable");
-            handTrackingEvents = GetComponent<XRHandTrackingEvents>();
-            if (handTrackingEvents == null)
-            {
-                //Debug.Log("add XRHandTrackingEvents component");
-                handTrackingEvents = gameObject.AddComponent<XRHandTrackingEvents>();
-            }
-
-            if (handTrackingEvents != null)
-            {
-                //Debug.Log("registering event handers");
-                handTrackingEvents.poseUpdated.AddListener(OnPoseUpdated);
-                handTrackingEvents.jointsUpdated.AddListener(OnJointsUpdated);
-                handTrackingEvents.trackingAcquired.AddListener(OnTrackingAcquired);
-                handTrackingEvents.trackingLost.AddListener(OnTrackingLost);
-                handTrackingEvents.trackingChanged.AddListener(OnTrackingChanged);
-            }
-        }
 
         private void OnDisable()
         {
@@ -49,8 +29,43 @@ namespace com.prossel.XR.Hands
                 handTrackingEvents.trackingAcquired.RemoveListener(OnTrackingAcquired);
                 handTrackingEvents.trackingLost.RemoveListener(OnTrackingLost);
                 handTrackingEvents.trackingChanged.RemoveListener(OnTrackingChanged);
+
+                handTrackingEvents = null;
             }
         }
+
+        private void Update()
+        {
+            // Wait for a valid handedness value
+            if (handTrackingEvents == null && handedness != Handedness.Invalid)
+            {
+                // Try to use exisiting with matching handedness
+                foreach (var comp in GetComponents<XRHandTrackingEvents>())
+                {
+                    if (comp.handedness == handedness)
+                    {
+                        handTrackingEvents = comp;
+                        break;
+                    }
+                } 
+
+                // If not found, add one
+                if (handTrackingEvents == null)
+                {
+                    handTrackingEvents = gameObject.AddComponent<XRHandTrackingEvents>();
+                    handTrackingEvents.handedness = handedness;
+                }
+
+                // Register event handlers
+                //Debug.Log("registering event handers");
+                handTrackingEvents.poseUpdated.AddListener(OnPoseUpdated);
+                handTrackingEvents.jointsUpdated.AddListener(OnJointsUpdated);
+                handTrackingEvents.trackingAcquired.AddListener(OnTrackingAcquired);
+                handTrackingEvents.trackingLost.AddListener(OnTrackingLost);
+                handTrackingEvents.trackingChanged.AddListener(OnTrackingChanged);
+            }
+        }
+
 
         private void OnTrackingChanged(bool handIsTracked)
         {
