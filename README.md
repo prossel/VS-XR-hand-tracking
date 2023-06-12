@@ -67,6 +67,11 @@ Now install this package
 
 ## Getting started
 
+### Try the demo
+
+* Copy the scene Packages/VS XR Hand tracking/Scenes/HandEventDemo to your assets
+* Open, build or run
+
 ### XR Hand Tracking Events
 
 * Create an empty GameObject
