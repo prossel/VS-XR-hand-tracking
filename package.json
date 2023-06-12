@@ -1,0 +1,12 @@
+{
+  "name": "com.github.prossel.vs-xr-hand-tracking",
+  "displayName": "VS XR Hand tracking",
+  "description": "Hand tracking events for Unity visual scripting.",
+  "unity": "2021.3",
+  "unityRelease": "0f1",
+  "licenseSpdxId": "MIT",
+  "licenseName": "MIT License",
+  "repoUrl": "https://github.com/prossel/VS-XR-hand-tracking",
+  "version": "1.0.0",
+  "type": "library"
+}
